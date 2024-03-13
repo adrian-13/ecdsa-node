@@ -1,7 +1,7 @@
-const { secp256k1 } = require("ethereum-cryptography/secp256k1.js");
-const { toHex } = require("ethereum-cryptography/utils");
-const { keccak256 } = require("ethereum-cryptography/keccak");
-const { utf8ToBytes } = require("ethereum-cryptography/utils");
+import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
+import { toHex } from "ethereum-cryptography/utils";
+import { keccak256 } from "ethereum-cryptography/keccak";
+import { utf8ToBytes } from "ethereum-cryptography/utils";
 
 /* === Ethereum Key Generation and Address Derivation === */
 
@@ -57,4 +57,3 @@ console.log("Verification Result:", verificationResult);
 
 // export functions
 export default hashMessage;
-export default App;
