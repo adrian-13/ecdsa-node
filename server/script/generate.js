@@ -54,3 +54,7 @@ const message = "This is a message to be signed";
 const signature = signMessage(message);
 const verificationResult = verifyMessage(message, signature);
 console.log("Verification Result:", verificationResult);
+
+// export functions
+export default hashMessage;
+export default App;
