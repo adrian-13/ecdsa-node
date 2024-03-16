@@ -27,8 +27,11 @@ function Transfer({ address, setBalance }) {
       const messageHash = hashMessage(recipient + sendAmount);
       console.log("Message hash in hex: ", uint8ArrayToHex(messageHash));
 
-      // Signs the message hash using the private key.
+      // Signs the message hash using the private key and converts signature components to strings.
       const signature = signMessage(messageHash, privateKey);
+      const signatureR = signature.r.toString();
+      const signatureS = signature.s.toString();
+      const signatureRecovery = signature.recovery.toString();
       console.log(signature);
 
       /* === // The following is an example of how to recover the public key from a signature
@@ -49,10 +52,10 @@ function Transfer({ address, setBalance }) {
         data: { balance },
       } = await server.post(`send`, {
         sender: address,
+        recipient: address,
         amount: parseInt(sendAmount),
-        recipient,
         messageHash,
-        signature,
+        signature: { signatureS, signatureR, signatureRecovery },
       });
       setBalance(balance);
     } catch (ex) {
