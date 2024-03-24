@@ -2,7 +2,7 @@ import * as ethUtils from "ethereumjs-util";
 import * as crypto from "crypto";
 
 // Define a function to generate a new Ethereum address
-function generateNewAddress() {
+export function generateNewAddress() {
   // Generate a random 32-byte private key using the crypto library
   const privateKey = crypto.randomBytes(32);
 
@@ -23,14 +23,14 @@ function generateNewAddress() {
 }
 
 // Define a function to hash a message
-function hashMessage(message) {
+export function hashMessage(message) {
   // Use the keccak256 hashing algorithm to hash the input message
   const hashedMessage = ethUtils.keccakFromString(message);
   return hashedMessage;
 }
 
 // Define a function to sign a hashed message with a private key
-function signMessage(msgHash, privateKeyHex) {
+export function signMessage(msgHash, privateKeyHex) {
   // Convert the private key from a hex string to a Buffer, removing the '0x' prefix if present
   const privateKey = Buffer.from(privateKeyHex.replace("0x", ""), "hex");
   // Sign the hashed message with the private key using the ECDSA
