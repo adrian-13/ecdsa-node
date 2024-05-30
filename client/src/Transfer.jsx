@@ -1,65 +1,99 @@
 import { useState } from "react";
 import server from "./server";
 import {
-  hashMessage,
   signMessage,
-  verifyMessage,
-  uint8ArrayToHex,
-  recoveryPublicKey,
-} from "../../server/script/generate";
+  verifyEthAddress,
+  isValidEthAddress,
+} from "../public/script/functions"; // Import signMessage, verifyEthAddress and isValidEthAddress
 
-function Transfer({ address, setBalance }) {
+function Transfer({ address, setBalance, publicKey, privateKey }) {
+  // Receive privateKey as a prop
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
-  // A hard-coded example of a private key. In production, never expose private keys in your source code.
-  const privateKey =
-    "c46726e39b7108efa8b39beea426abf6f3928abaaafd30f63efdd9c224bab8e9";
-
-  // A generic setter function to update state based on event input.
   const setValue = (setter) => (evt) => setter(evt.target.value);
 
   async function transfer(evt) {
     evt.preventDefault();
 
+    if (!sendAmount || !recipient || !publicKey || !address || !privateKey) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    // Validate ETH address
+    if (!isValidEthAddress(address)) {
+      alert("Invalid ETH address!");
+      return;
+    }
+
+    // Validate recipient address
+    if (!isValidEthAddress(recipient)) {
+      alert("Invalid recipient ETH address!");
+      return;
+    }
+
+    // Validate that the recipient address is not the same as the sender's address
+    if (recipient.toLowerCase() === address.toLowerCase()) {
+      alert("Recipient address cannot be the same as sender address!");
+      return;
+    }
+
+    // Validate public key length
+    if (publicKey.length !== 130) {
+      alert("Invalid public key length!");
+      return;
+    }
+
+    // Validate private key length
+    if (privateKey.length !== 64) {
+      alert("Invalid private key length!");
+      return;
+    }
+
+    // Validate send amount
+    const amount = parseFloat(sendAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert("Invalid send amount!");
+      return;
+    }
+
+    // Verify the ETH address and public key match only if public key is provided
+    if (!verifyEthAddress(address, publicKey)) {
+      alert("Public key does not match the ETH address!");
+      return;
+    }
+
     try {
-      // Generates a hash of the transaction details.
-      const messageHash = hashMessage(recipient + sendAmount);
-      console.log("Message hash in hex: ", uint8ArrayToHex(messageHash));
-
-      // Signs the message hash using the private key and converts signature components to strings.
-      const signature = signMessage(messageHash, privateKey);
-      const signatureR = signature.r.toString();
-      const signatureS = signature.s.toString();
-      const signatureRecovery = signature.recovery.toString();
-      console.log(signature);
-
-      /* === // The following is an example of how to recover the public key from a signature
-      and verify that signature against a message hash, typically performed on the server side.
-      === */
-
-      // Attempts to recover the public key from the signature. This is usually necessary for verification purposes.
-      const recoveredPublicKey = signature.recoverPublicKey(messageHash);
-      // Prepending '04' is a common practice for indicating an uncompressed public key.
-      const publicKey = "04" + recoveryPublicKey(recoveredPublicKey);
-      console.log(`Public Key (hex): ${publicKey}`);
-      // Verifies the signature against the message hash and public key.
-      const messageVerify = verifyMessage(signature, messageHash, publicKey);
-      console.log(messageVerify);
-
-      // Sends transaction details to the server and updates the balance upon success.
-      const {
-        data: { balance },
-      } = await server.post(`send`, {
+      const data = {
         sender: address,
-        recipient: address,
-        amount: parseInt(sendAmount),
-        messageHash,
-        signature: { signatureS, signatureR, signatureRecovery },
-      });
-      setBalance(balance);
+        recipient: recipient,
+        amount: amount,
+      };
+
+      const signature = await signMessage(privateKey, data);
+
+      const transaction = {
+        ...data,
+        signature: signature,
+        publicKey: publicKey, // Include the public key in the transaction object
+      };
+
+      // Kontrolný kód na vypísanie transakčného objektu do konzoly
+      console.log("Transaction object:", transaction);
+
+      const response = await server.post(`send`, transaction);
+
+      // Skontrolujte, čo server skutočne vrátil
+      console.log("Server response:", response);
+
+      if (response.data && response.data.balance !== undefined) {
+        setBalance(response.data.balance);
+      } else {
+        alert("Unexpected response from server");
+      }
     } catch (ex) {
-      alert(ex.response.data.message);
+      alert(ex.response?.data?.message || ex.message);
     }
   }
 
