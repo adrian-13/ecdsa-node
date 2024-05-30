@@ -1,10 +1,30 @@
-## ECDSA Node
+# ECDSA Node Application
 
-This project is an example of using a client and server to facilitate transfers between different addresses. Since there is just a single server on the back-end handling transfers, this is clearly very centralized. We won't worry about distributed consensus for this project.
-
-However, something that we would like to incoporate is Public Key Cryptography. By using Elliptic Curve Digital Signatures we can make it so the server only allows transfers that have been signed for by the person who owns the associated address.
+This project is a simple ECDSA (Elliptic Curve Digital Signature Algorithm) based application designed to facilitate the transfer of balances between accounts. The frontend is built using React, and it communicates with a server to process transactions securely. The project aims to demonstrate the use of public key cryptography to ensure that only the owner of the corresponding private key can authorize transactions from an account.
  
-### Client
+## Features
+
+### Frontend
+
+**1. Wallet Component**
+
+* Allows users to input their wallet address, private key, and public key.
+* Displays the balance of the entered wallet address.
+* Validates ETH address format and key lengths.
+  
+**2. Transfer Component**
+
+* Enables users to send transactions to other accounts.
+* Validates transaction inputs, including recipient address, amount, and key formats.
+* Verifies that the public key matches the provided ETH address before processing the transaction.
+* Displays transaction details in the console for debugging.
+
+**3. Input Validations**
+
+*Checks the format of ETH addresses.
+*Ensures the public key and private key have correct lengths.
+*Validates that the send amount is a positive number.
+*Confirms that the recipient address is not the same as the sender address.
 
 The client folder contains a [react app](https://reactjs.org/) using [vite](https://vitejs.dev/). To get started, follow these steps:
 
@@ -13,7 +33,14 @@ The client folder contains a [react app](https://reactjs.org/) using [vite](http
 3. Run `npm run dev` to start the application 
 4. Now you should be able to visit the app at http://127.0.0.1:5173/
 
-### Server
+### Server Side (To be Implemented)
+
+**1. Transaction Processing**
+
+* Receive transaction requests from the frontend.
+* Validate the digital signature using the provided public key.
+* Verify the sender's balance before processing the transaction.
+* Update the sender's and recipient's balances accordingly.
 
 The server folder contains a node.js server using [express](https://expressjs.com/). To run the server, follow these steps:
 
