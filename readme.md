@@ -21,10 +21,10 @@ This project is a simple ECDSA (Elliptic Curve Digital Signature Algorithm) base
 
 **3. Input Validations**
 
-*Checks the format of ETH addresses.
-*Ensures the public key and private key have correct lengths.
-*Validates that the send amount is a positive number.
-*Confirms that the recipient address is not the same as the sender address.
+* Checks the format of ETH addresses.
+* Ensures the public key and private key have correct lengths.
+* Validates that the send amount is a positive number.
+* Confirms that the recipient address is not the same as the sender address.
 
 The client folder contains a [react app](https://reactjs.org/) using [vite](https://vitejs.dev/). To get started, follow these steps:
 
@@ -37,21 +37,22 @@ The client folder contains a [react app](https://reactjs.org/) using [vite](http
 
 **1. Transaction Processing**
 
-Receive Requests: Listens for transaction requests at /send.
-Validate Signature: Uses verifySignature to ensure the transaction's authenticity.
-Verify Address: Derives and checks the sender's address using getEthAddress.
-Check Balance: Ensures the sender has sufficient funds.
-Update Balances: Adjusts the sender's and recipient's balances and records the transaction.
+* Receive Requests: Listens for transaction requests at /send.
+* Validate Signature: Uses verifySignature to ensure the transaction's authenticity.
+* Verify Address: Derives and checks the sender's address using getEthAddress.
+* Check Balance: Ensures the sender has sufficient funds.
+* Update Balances: Adjusts the sender's and recipient's balances and records the transaction.
 
 
 **2. Balance Inquiry**
 
-Get Balance: Retrieves the current balance of a given address via /balance/:address.
+* Get Balance: Retrieves the current balance of a given address via /balance/:address.
 
 
 **3.Transaction History**
 
-Get Transactions: Provides transaction history for a specific address through /transactions/:address.
+* Get Transactions: Provides transaction history for a specific address through /transactions/:address.
+  
 This setup ensures secure transaction validation, accurate balance management, and accessible transaction histories.
 
 The server folder contains a node.js server using [express](https://expressjs.com/). To run the server, follow these steps:
