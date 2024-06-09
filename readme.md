@@ -33,14 +33,26 @@ The client folder contains a [react app](https://reactjs.org/) using [vite](http
 3. Run `npm run dev` to start the application 
 4. Now you should be able to visit the app at http://127.0.0.1:5173/
 
-### Server Side (To be Implemented)
+### Server Side Functionality
 
 **1. Transaction Processing**
 
-* Receive transaction requests from the frontend.
-* Validate the digital signature using the provided public key.
-* Verify the sender's balance before processing the transaction.
-* Update the sender's and recipient's balances accordingly.
+Receive Requests: Listens for transaction requests at /send.
+Validate Signature: Uses verifySignature to ensure the transaction's authenticity.
+Verify Address: Derives and checks the sender's address using getEthAddress.
+Check Balance: Ensures the sender has sufficient funds.
+Update Balances: Adjusts the sender's and recipient's balances and records the transaction.
+
+
+**2. Balance Inquiry**
+
+Get Balance: Retrieves the current balance of a given address via /balance/:address.
+
+
+**3.Transaction History**
+
+Get Transactions: Provides transaction history for a specific address through /transactions/:address.
+This setup ensures secure transaction validation, accurate balance management, and accessible transaction histories.
 
 The server folder contains a node.js server using [express](https://expressjs.com/). To run the server, follow these steps:
 
