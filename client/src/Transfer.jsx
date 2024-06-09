@@ -4,10 +4,10 @@ import {
   signMessage,
   verifyEthAddress,
   isValidEthAddress,
-} from "../public/script/functions"; // Import signMessage, verifyEthAddress and isValidEthAddress
+  hashMessage,
+} from "../public/script/functions"; // Import hashMessage
 
 function Transfer({ address, setBalance, publicKey, privateKey }) {
-  // Receive privateKey as a prop
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
@@ -21,44 +21,37 @@ function Transfer({ address, setBalance, publicKey, privateKey }) {
       return;
     }
 
-    // Validate ETH address
     if (!isValidEthAddress(address)) {
       alert("Invalid ETH address!");
       return;
     }
 
-    // Validate recipient address
     if (!isValidEthAddress(recipient)) {
       alert("Invalid recipient ETH address!");
       return;
     }
 
-    // Validate that the recipient address is not the same as the sender's address
     if (recipient.toLowerCase() === address.toLowerCase()) {
       alert("Recipient address cannot be the same as sender address!");
       return;
     }
 
-    // Validate public key length
     if (publicKey.length !== 130) {
       alert("Invalid public key length!");
       return;
     }
 
-    // Validate private key length
     if (privateKey.length !== 64) {
       alert("Invalid private key length!");
       return;
     }
 
-    // Validate send amount
     const amount = parseFloat(sendAmount);
     if (isNaN(amount) || amount <= 0) {
       alert("Invalid send amount!");
       return;
     }
 
-    // Verify the ETH address and public key match only if public key is provided
     if (!verifyEthAddress(address, publicKey)) {
       alert("Public key does not match the ETH address!");
       return;
@@ -71,24 +64,25 @@ function Transfer({ address, setBalance, publicKey, privateKey }) {
         amount: amount,
       };
 
+      const msgHash = await hashMessage(JSON.stringify(data));
       const signature = await signMessage(privateKey, data);
 
       const transaction = {
         ...data,
         signature: signature,
-        publicKey: publicKey, // Include the public key in the transaction object
+        publicKey: publicKey,
+        msgHash: msgHash, // Include msgHash in the transaction object
       };
 
-      // Kontrolný kód na vypísanie transakčného objektu do konzoly
       console.log("Transaction object:", transaction);
 
       const response = await server.post(`send`, transaction);
 
-      // Skontrolujte, čo server skutočne vrátil
       console.log("Server response:", response);
 
       if (response.data && response.data.balance !== undefined) {
         setBalance(response.data.balance);
+        alert("Transaction successful!"); // Display alert for success message
       } else {
         alert("Unexpected response from server");
       }
