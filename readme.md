@@ -33,6 +33,7 @@ The client folder contains a [react app](https://reactjs.org/) using [vite](http
 3. Run `npm run dev` to start the application 
 4. Now you should be able to visit the app at http://127.0.0.1:5173/
 
+<br />   
 ### Server Side Functionality
 
 **1. Transaction Processing**
